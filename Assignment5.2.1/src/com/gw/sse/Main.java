@@ -1,22 +1,26 @@
 package com.gw.sse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
-	    List<Integer> data = Arrays.asList(5,1,4,2,5,3,898,1,3,2,12);
+	    List<Integer> data = Arrays.asList(5,1,4,2,5,3,87799778,1,3,2,12);
         for(int i = 1; i < data.size(); i += 2){
+            List<Integer> num = new ArrayList<Integer>();
+            num.add(data.get(i+1));
             switch(data.get(i)){
                 case 1:
-                    isOdd(data.get(i+1));
+                    isOdd(num);
                     break;
                 case 2:
-                    isPrime(data.get(i+1));
+                    isPrime(num);
                     break;
                 case 3:
-                    isPalindrome(data.get(i+1));
+                    isPalindrome(num);
                     break;
                 default:
                     System.out.println("Invalid function ID found, skipping...");
@@ -26,24 +30,31 @@ public class Main {
     }
 
     //1
-    public static void isOdd(int num){
-        if(num % 2 == 0){
-            System.out.println("EVEN");
+    public static void isOdd(List<Integer> num){
+        num = num.stream().map(n -> n%2).collect(Collectors.toList());
+        if(num.get(0) == 1){
+            System.out.println("ODD");
         }
         else{
-            System.out.println("ODD");
+            System.out.println("EVEN");
         }
     }
 
     //2
-    public static void isPrime(int num){
-        boolean isPrime = true;
-        for(int i = 1; i < num / 2; i++){
-            if(num % i == 0){
-                isPrime = false;
+    public static void isPrime(List<Integer> num){
+        num = num.stream().map(n -> {
+            boolean isPrime = true;
+            for(int i = 1; i < n/2; i++){
+                if(n % i == 0){
+                    isPrime = false;
+                    break;
+                }
             }
-        }
-        if(isPrime){
+            if(isPrime) return 1;
+            else return 0;
+        }).collect(Collectors.toList());
+
+        if(num.get(0) == 1){
             System.out.println("PRIME");
         }
         else{
@@ -52,20 +63,38 @@ public class Main {
     }
 
     //3
-    public static void isPalindrome(int num){
-        String s = String.valueOf(num);
-        if(s.charAt(0) == s.charAt(s.length() - 1)){
-            if(s.length() == 0 || s.length() == 1) {
-                System.out.println("PALINDROME");
+    public static void isPalindrome(List<Integer> num){
+        num = num.stream().map(n -> {
+            String s = String.valueOf(n);
+            boolean isPalindrome;
+            if(s.length() % 2 == 0){
+                int halfLength = s.length() / 2;
+                String sub1 = s.substring(0, halfLength);
+                String sub2 = s.substring(halfLength);
+                StringBuffer sbr = new StringBuffer(sub2);
+                sbr.reverse();
+                sub2 = sbr.toString();
+                isPalindrome = sub1.equals(sub2);
             }
             else{
-                s = s.substring(1, s.length()-1);
-                isPalindrome(Integer.parseInt(s));
+                int halfLength = s.length() / 2;
+                String sub1 = s.substring(0, halfLength);
+                String sub2 = s.substring(halfLength + 1);
+                StringBuffer sbr = new StringBuffer(sub2);
+                sbr.reverse();
+                sub2 = sbr.toString();
+                isPalindrome = sub1.equals(sub2);
             }
+            if(isPalindrome) return 1;
+            return 0;
+        }).collect(Collectors.toList());
 
+        if(num.get(0) == 1){
+            System.out.println("PALINDROME");
         }
-        else {
+        else{
             System.out.println("NOT PALINDROME");
         }
+
     }
 }
